@@ -28,7 +28,7 @@ app.use(cors());
 // adding morgan to log HTTP requests
 app.use(morgan('combined'));
 
-app.use('/img',express.static('public'));
+app.use(express.static('public'));
 
 const upload = multer({ storage: multer.memoryStorage() })
 
