@@ -48,8 +48,7 @@ app.route('/resize-original')
           console.log('resize method success');
         }
 
-        var filePath = path.join(__dirname, '..', rezisedImage)
-        res.end(filePath);
+        res.end(rezisedImage);
         
     }
     catch (error) {
@@ -89,7 +88,7 @@ async function resizeImageOriginalpng(image) {
       .resize(1920, 1080, {
         fit: sharp.fit.inside,
         withoutEnlargement: true
-      }).toFile("resized-image.png");
+      }).toFile("public/images/resized-image.png");
 
       return 'resized-image.png'
 
@@ -108,7 +107,7 @@ async function resizeImageOriginal(image) {
       .resize(1920, 1080, {
         fit: sharp.fit.inside,
         withoutEnlargement: true
-      }).toFile("resized-image.jpg");
+      }).toFile("public/images/resized-image.jpg");
 
       return 'resized-image.png'
 
