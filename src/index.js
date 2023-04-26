@@ -28,6 +28,8 @@ app.use(cors());
 // adding morgan to log HTTP requests
 app.use(morgan('combined'));
 
+app.use(express.static(path.join(__dirname, '..')));
+
 const upload = multer({ storage: multer.memoryStorage() })
 
 // resize original image post method
@@ -46,31 +48,9 @@ app.route('/resize-original')
           console.log('resize method success');
         }
 
-        //var metadataResized = await getMetadataResized()
-        
-       /*  const options = {
-          root: path.join(__dirname, '../'),
-          dotfiles: 'deny',
-          headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-          }
-      };
-        
-      //res.sendFile(rezisedImage, options);
-      res.sendFile(rezisedImage, options, function (err) {
-        if (err) {
-          next(err)
-        } else {
-          console.log('Sent:', rezisedImage)
-        }
-      }) */
-        //res.status(200)
-        //res.send(`<img src=src/${rezisedImage}>`);
-        //res.send('src/'+ rezisedImage);
         var filePath = path.join(__dirname, '..', rezisedImage)
-        //res.end(filePath);
-        res.sendFile(filePath)
+        res.end(filePath);
+        
     }
     catch (error) {
         res.status(400).json({message: error.message})
