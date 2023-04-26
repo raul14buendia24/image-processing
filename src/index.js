@@ -69,7 +69,8 @@ app.route('/resize-original')
         //res.send(`<img src=src/${rezisedImage}>`);
         //res.send('src/'+ rezisedImage);
         var filePath = path.join(__dirname, '..', rezisedImage)
-        res.end(filePath);
+        //res.end(filePath);
+        res.sendFile(filePath)
     }
     catch (error) {
         res.status(400).json({message: error.message})
