@@ -33,22 +33,22 @@ app.use(express.static('public'));
 const upload = multer({ storage: multer.memoryStorage() })
 
 // resize original image post method
-app.route('/resize-original')
-.post( upload.single('image'), async (req, res,next) => {
+app.route('/resize-images')
+.post(upload.single('image'), async (req, res,next) => {
     console.log(req.file)
     try {
         
         var metadata = await getMetadata(req.file)
         
         if(metadata.format == 'png') {
-          var rezisedImage = await resizeImageOriginalpng(req.file);
+          var files = await resizeImagesPng(req.file, req.body.fileName);
           console.log('resize method success');
         } else {
-          var rezisedImage = await resizeImageOriginal(req.file);
+          var files = await resizeImagesJpg(req.file, req.body.fileName);
           console.log('resize method success');
         }
 
-        res.end(rezisedImage);
+        res.end(JSON.stringify(files));
         
     }
     catch (error) {
@@ -68,29 +68,52 @@ async function getMetadata(image) {
   }
 }
 
-async function getMetadataResized() {
-    const sharpImage = await sharp('resized-image.png')
-  try {
-    const metadata = await sharpImage.metadata();
-    //const stats = await sharp(image).stats();
-    return metadata;
-  } catch (error) {
-    console.log(`An error occurred during processing: ${error}`);
-  }
-}
-
-async function resizeImageOriginalpng(image) {
+async function resizeImagesPng(image, fileName) {
   const sharpImage = await sharp(image.buffer)
-  
+  var files = []
+  var rndString = generateString()
+  var originalFileName = fileName + '-' + rndString + '-' + "original.png"
+  var mediumFileName = fileName + '-' + rndString + '-' + "md.png"
+  var smallFileName = fileName + '-' + rndString + '-' + "sm.png"
+  var lowresFileName = fileName + '-' + rndString + '-' + "lowres.png"
   try {
         sharpImage
       .png({ palette: true })
       .resize(1920, 1080, {
         fit: sharp.fit.inside,
         withoutEnlargement: true
-      }).toFile("public/images/resized-image.png");
+      }).toFile("public/images/" + originalFileName);
 
-      return 'resized-image.png'
+      files.push(originalFileName)
+
+      sharpImage
+      .png({ palette: true })
+      .resize(900, 900, {
+        fit: sharp.fit.inside,
+        withoutEnlargement: true
+      })
+      .toFile("public/images/" + mediumFileName);
+      files.push(mediumFileName)
+
+        sharpImage
+        .png({ palette: true })
+        .resize(600, 600, {
+          fit: sharp.fit.inside,
+          withoutEnlargement: true
+        })
+        .toFile("public/images/" + smallFileName);
+        files.push(smallFileName)
+
+          sharpImage
+        .png({ palette: true })
+        .resize(300, 300, {
+          fit: sharp.fit.inside,
+          withoutEnlargement: true
+        })
+        .toFile("public/images/" + lowresFileName);
+        files.push(lowresFileName)
+
+      return files
 
     } catch (error) {
       return error
@@ -98,18 +121,45 @@ async function resizeImageOriginalpng(image) {
     }
 }
 
-async function resizeImageOriginal(image) {
-  console.log(image)
+async function resizeImagesJpg(image, fileName) {
   const sharpImage = await sharp(image.buffer)
+  var files = []
+  var rndString = generateString()
+  var originalFileName = fileName + '-' + rndString + '-' + "original.jpg"
+  var mediumFileName = fileName + '-' + rndString + '-' + "md.jpg"
+  var smallFileName = fileName + '-' + rndString + '-' + "sm.jpg"
+  var lowresFileName = fileName + '-' + rndString + '-' + "lowres.jpg"
   
   try {
         sharpImage
       .resize(1920, 1080, {
         fit: sharp.fit.inside,
         withoutEnlargement: true
-      }).toFile("public/images/resized-image.jpg");
+      }).toFile("public/images/" + originalFileName);
+      files.push(originalFileName)
 
-      return 'resized-image.jpg'
+      sharpImage
+      .resize(900, 900, {
+        fit: sharp.fit.inside,
+        withoutEnlargement: true
+      }).toFile("public/images/" + mediumFileName);
+      files.push(mediumFileName)
+
+      sharpImage
+      .resize(600, 600, {
+        fit: sharp.fit.inside,
+        withoutEnlargement: true
+      }).toFile("public/images/" + smallFileName);
+      files.push(smallFileName)
+
+      sharpImage
+      .resize(300, 300, {
+        fit: sharp.fit.inside,
+        withoutEnlargement: true
+      }).toFile("public/images/" + lowresFileName);
+      files.push(lowresFileName)
+
+      return files
 
     } catch (error) {
       return error
@@ -118,49 +168,16 @@ async function resizeImageOriginal(image) {
 }
 
 
-async function resizeImage() {
-    const sharpImage = await sharp("javascript.png")
-    
-    try {
-        sharpImage
-      .png({ palette: true })
-      .resize(900, 900, {
-        fit: sharp.fit.inside,
-        withoutEnlargement: true
-      })
-        .toFile("big-png-image-md.png");
-    
-        sharpImage
-        .png({ palette: true })
-        .resize(600, 600, {
-          fit: sharp.fit.inside,
-          withoutEnlargement: true
-        })
-          .toFile("big-png-image-sm.png");
+  function generateString() {
+    const characters ='abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = ' ';
+    const charactersLength = 5;
+    for ( let i = 0; i < 5; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
 
-          sharpImage
-        .png({ palette: true })
-        .resize(300, 300, {
-          fit: sharp.fit.inside,
-          withoutEnlargement: true
-        })
-          .toFile("big-png-image-lowres.png");
-     
-          sharpImage
-        .png({ palette: true })
-        .resize(1920, 1080, {
-          fit: sharp.fit.inside,
-          withoutEnlargement: true
-        })
-          .toFile("big-png-image-original.png");
-      } catch (error) {
-        console.log(error);
-      }
-  }
-
-  //resizeImage();
-
-
+    return result.trim();
+}
 
 // starting the server
 /*app.listen(3001, () => {
