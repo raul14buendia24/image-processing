@@ -35,7 +35,7 @@ const upload = multer({ storage: multer.memoryStorage() })
 // resize original image post method
 app.route('/resize-original')
 .post( upload.single('image'), async (req, res,next) => {
-    //console.log(req.file)
+    console.log(req.file)
     try {
         
         var metadata = await getMetadata(req.file)
@@ -109,7 +109,7 @@ async function resizeImageOriginal(image) {
         withoutEnlargement: true
       }).toFile("public/images/resized-image.jpg");
 
-      return 'resized-image.png'
+      return 'resized-image.jpg'
 
     } catch (error) {
       return error
