@@ -84,7 +84,7 @@ async function resizeImagesPng(image, fileName) {
         withoutEnlargement: true
       }).toFile("public/images/" + originalFileName);
 
-      files.push(originalFileName)
+      var saved = files.push(originalFileName)
 
       sharpImage
       .png({ palette: true })
@@ -93,7 +93,7 @@ async function resizeImagesPng(image, fileName) {
         withoutEnlargement: true
       })
       .toFile("public/images/" + mediumFileName);
-      files.push(mediumFileName)
+      var saved = files.push(mediumFileName)
 
         sharpImage
         .png({ palette: true })
@@ -102,7 +102,7 @@ async function resizeImagesPng(image, fileName) {
           withoutEnlargement: true
         })
         .toFile("public/images/" + smallFileName);
-        files.push(smallFileName)
+        var saved = files.push(smallFileName)
 
           sharpImage
         .png({ palette: true })
@@ -111,7 +111,7 @@ async function resizeImagesPng(image, fileName) {
           withoutEnlargement: true
         })
         .toFile("public/images/" + lowresFileName);
-        files.push(lowresFileName)
+        var saved = files.push(lowresFileName)
 
       return files
 
